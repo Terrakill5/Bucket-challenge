@@ -13,19 +13,12 @@ function App() {
 
   const store = async (e) => {
     e.preventDefault();
-    console.log(trigger);
+
     setTrigger(!trigger);
-    console.log(trigger);
+
     if (revision(x, y, z)) {
-      console.log("es valido");
       const tieneSolucionAhora = verificarSolucion(x, y, z);
       setTieneSolucion(tieneSolucionAhora);
-
-      if (tieneSolucionAhora) {
-        console.log("tiene solucion");
-      } else {
-        console.log("no tiene solucion por", x, y, z);
-      }
     }
   };
   //Se usa la siguiente funcion para determinar validez de datos
@@ -38,9 +31,10 @@ function App() {
     z >= 0;
   // La siguiente se usa para confirmar si tiene solucion
   const verificarSolucion = (x, y, z) =>
-    !(z > x + y) &&
-    !(z > x && z > y) &&
-    ((z % x === 0 && y > z) || (z % y === 0 && x > z));
+    (!(z > x + y) &&
+      !(z > x && z > y) &&
+      ((z % x === 0 && y > z) || (z % y === 0 && x > z))) ||
+    z === x + y;
 
   /* if (z > x + y || (z>x && z>y)){
       return false
@@ -84,14 +78,7 @@ function App() {
           </button>
         </form>
       </div>
-      {tieneSolucion && (
-        <Solucion
-          x={x}
-          y={y}
-          medida={z}
-          trigger={trigger}
-        />
-      )}
+      {tieneSolucion && <Solucion x={x} y={y} medida={z} trigger={trigger} />}
 
       {!tieneSolucion && <h3>No tiene Solucion</h3>}
     </>
