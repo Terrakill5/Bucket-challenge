@@ -9,9 +9,10 @@ const Solucion = (bucketX) => {
       explicacionSolucion: "",
     },
   ]);
+  const [encontradaSolucion, setEncontradaSolucion] = useState(false);
 
   const explicacion = () => {
-
+    setEncontradaSolucion(false);
     // Primero se vacia el array de la solucion
 
     explicacionSolucion.splice(0, explicacionSolucion.length);
@@ -31,10 +32,9 @@ const Solucion = (bucketX) => {
 
       let i = 0;
       if (bucketX.x < bucketX.y) {
-
         // Aqui se busca la mejor solucion, para ver de que lado se puede llegar mas rapido
         //En el caso siguiente, demuestra que X esta mas lejos que Y, por lo que iremos reduciendo Y desde su maximo
-        
+
         if (primerValor > segundoValor) {
           llenarBalde(explicacionSolucion, "y");
           while (
@@ -52,7 +52,6 @@ const Solucion = (bucketX) => {
             vaciarBalde(explicacionSolucion, "x");
           }
         } else {
-
           // en este caso, se lleva a Y vacio y se va incrementando dado que el valor esta mas cerca de X
 
           llenarBalde(explicacionSolucion, "x");
@@ -73,7 +72,6 @@ const Solucion = (bucketX) => {
           }
         }
       } else {
-
         //En este caso es cuando X es mayor que Y, por lo que se hace lo contrario al caso anterior
 
         if (primerValor > segundoValor) {
@@ -98,7 +96,6 @@ const Solucion = (bucketX) => {
             }
           }
         } else {
-
           // en este caso, se lleva a X lleno y se va reduciendo dado que el valor esta mas cerca que Y
 
           llenarBalde(explicacionSolucion, "x");
@@ -120,21 +117,22 @@ const Solucion = (bucketX) => {
         }
       }
     }
+
     explicacionSolucion[explicacionSolucion.length - 1].explanation =
       explicacionSolucion[explicacionSolucion.length - 1].explanation.concat(
         ", solved"
       );
+    setEncontradaSolucion(true);
   };
 
   /**
- * Vacía uno de los baldes
- * @param  {Array} arraySolucion array de la solución
- * @param  {String} balde Selecciona el balde que se quiere vaciar
- * @return {Void}      El objetivo del método es vaciar uno de los baldes, usando una condicional 
- */
+   * Vacía uno de los baldes
+   * @param  {Array} arraySolucion array de la solución
+   * @param  {String} balde Selecciona el balde que se quiere vaciar
+   * @return {Void}      El objetivo del método es vaciar uno de los baldes, usando una condicional
+   */
 
   const vaciarBalde = (arraySolucion, balde) => {
-
     // Primero se selecciona la posición a trabajar
 
     let posicion = arraySolucion.length - 1;
@@ -151,9 +149,7 @@ const Solucion = (bucketX) => {
         bucketY: arraySolucion[posicion].bucketY,
         explanation: "Dumb bucketX",
       });
-    } 
-    else 
-    {
+    } else {
       arraySolucion.push({
         bucket: arraySolucion[posicion].bucket,
         bucketY: 0,
@@ -162,16 +158,15 @@ const Solucion = (bucketX) => {
     }
   };
 
-   /**
- * Llena uno de los baldes
- * @param  {Array} arraySolucion array de la solución
- * @param  {String} balde Selecciona el balde que se quiere llenar
- * @return {Void}      El objetivo del método es llenar uno de los baldes, usando condicionales 
- */
+  /**
+   * Llena uno de los baldes
+   * @param  {Array} arraySolucion array de la solución
+   * @param  {String} balde Selecciona el balde que se quiere llenar
+   * @return {Void}      El objetivo del método es llenar uno de los baldes, usando condicionales
+   */
 
   const llenarBalde = (arraySolucion, balde) => {
     if (balde === "x") {
-
       // Si el array esta en la primera posicion, no tendra valores anteriores, por lo que el balde que
       // no se esta llenando es 0, inicialmente
 
@@ -181,9 +176,7 @@ const Solucion = (bucketX) => {
           bucketY: 0,
           explanation: "Filled bucketX",
         });
-      } 
-      else
-       {
+      } else {
         // de no ser la primera posición, se le asigna su valor anterior
         arraySolucion.push({
           bucket: bucketX.x,
@@ -192,7 +185,6 @@ const Solucion = (bucketX) => {
         });
       }
     } else {
-
       // Si el array esta en la primera posicion, no tendra valores anteriores, por lo que el balde que
       // no se esta llenando es 0, inicialmente
 
@@ -202,9 +194,7 @@ const Solucion = (bucketX) => {
           bucketY: bucketX.y,
           explanation: "Filled bucketY",
         });
-      } 
-      else 
-      {
+      } else {
         arraySolucion.push({
           bucket: arraySolucion[arraySolucion.length - 1].bucket,
           bucketY: bucketX.y,
@@ -214,21 +204,19 @@ const Solucion = (bucketX) => {
     }
   };
 
-   /**
- * Transfiere uno de los baldes
- * @param  {Array} arraySolucion array de la solución
- * @param  {Number} baldeDesde Selecciona el balde que se transferir
- * @param  {Number} baldeHasta Selecciona el balde que recibe la transferencia
- * @return {Void}      El objetivo del método es transferir un balde a otro
- */
+  /**
+   * Transfiere uno de los baldes
+   * @param  {Array} arraySolucion array de la solución
+   * @param  {Number} baldeDesde Selecciona el balde que se transferir
+   * @param  {Number} baldeHasta Selecciona el balde que recibe la transferencia
+   * @return {Void}      El objetivo del método es transferir un balde a otro
+   */
 
   const transferirBalde = (arraySolucion, baldeDesde, baldeHasta) => {
-
     // Aqui se busca cual es el balde que va a transferir todo su contenido
 
     let cantidad = 0;
     if (arraySolucion[arraySolucion.length - 1].bucketY === baldeDesde) {
-
       // una vez encontrado va a pasar todo su contenido al otro balde, aca se decide la cantidad a transferir
 
       if (baldeDesde > baldeHasta) {
@@ -258,6 +246,7 @@ const Solucion = (bucketX) => {
     }
   };
   useEffect(() => {
+    
     explicacion();
   }, [bucketX.trigger]);
   return (
@@ -270,13 +259,14 @@ const Solucion = (bucketX) => {
         </tr>
       </thead>
       <tbody>
-        {explicacionSolucion.map((item, index) => (
-          <tr key={index}>
-            <td>{item.bucket}</td>
-            <td>{item.bucketY}</td>
-            <td>{item.explanation}</td>
-          </tr>
-        ))}
+        {encontradaSolucion &&
+          explicacionSolucion.map((item, index) => (
+            <tr key={index}>
+              <td>{item.bucket}</td>
+              <td>{item.bucketY}</td>
+              <td>{item.explanation}</td>
+            </tr>
+          ))}
       </tbody>
     </Table>
   );

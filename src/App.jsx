@@ -26,9 +26,9 @@ function App() {
     Number.isInteger(x) &&
     Number.isInteger(y) &&
     Number.isInteger(z) &&
-    x >= 0 &&
-    y >= 0 &&
-    z >= 0;
+    x > 0 &&
+    y > 0 &&
+    z > 0;
   // La siguiente se usa para confirmar si tiene solucion
   const verificarSolucion = (x, y, z) =>
     (!(z > x + y) &&
