@@ -17,7 +17,10 @@ function App() {
     setTrigger(!trigger);
 
     if (revision(x, y, z)) {
-      const tieneSolucionAhora = verificarSolucion(x, y, z);
+      // const tieneSolucionAhora = verificarSolucion(x, y, z);
+      const tieneSolucionAhora = true
+      console.log(x, y, z);
+      console.log(gcd(x,y,z));
       setTieneSolucion(tieneSolucionAhora);
     }
   };
@@ -35,10 +38,49 @@ function App() {
       !(z > x && z > y) &&
       ((z % x === 0 && y > z) || (z % y === 0 && x > z))) ||
     z === x + y;
+  /* Este es el maximo comun divisor, lo que permite saber si se puede alcanzar el valor de Z a traves de las
+ funciones establecidas */
+ /* const euclideanExtendedAlgorithm = (x, y, z) => {
+  let r0 = x;
+  let r1 = y;
+  let s0 = 1;
+  let s1 = 0;
+  let t0 = 0;
+  let t1 = 1;
 
-  /* if (z > x + y || (z>x && z>y)){
-      return false
-    } */
+  while (r1 !== 0) {
+    const quotient = Math.floor(r0 / r1);
+
+    const tempR = r0;
+    const tempS = s0;
+    const tempT = t0;
+
+    r0 = r1;
+    s0 = s1;
+    t0 = t1;
+
+    r1 = tempR - quotient * r1;
+    s1 = tempS - quotient * s1;
+    t1 = tempT - quotient * t1;
+  }
+
+  if (r0 === 0 || z % r0 !== 0) {
+    // No solution exists
+    return null;
+  }
+
+  const a = s0 * (z / r0);
+  const b = t0 * (z / r0);
+
+  return { a, b };
+} */
+
+ function gcd(a , b) {
+        if (b == 0)
+            return a;
+ 
+        return gcd(b, a % b);
+    }
 
   return (
     <>
