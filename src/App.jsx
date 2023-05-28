@@ -1,7 +1,8 @@
 import { useState } from "react";
+import { Table } from "react-bootstrap";
 
 import "./App.css";
-import Solucion from "./Solucion/Solucion";
+// import Solucion from "./Solucion/Solucion";
 import { Form } from "react-bootstrap";
 
 const App = () => {
@@ -9,7 +10,9 @@ const App = () => {
   const [y, setY] = useState(0);
   const [z, setZ] = useState(0);
   const [trigger, setTrigger] = useState(false);
+  const [arraySolucion,setArraySolucion] = useState([]);
   const [tieneSolucion, setTieneSolucion] = useState(false);
+  
 
   const store = async (e) => {
     e.preventDefault();
@@ -18,11 +21,11 @@ const App = () => {
 
     if (revision(x, y, z)) {
       // const tieneSolucionAhora = verificarSolucion(x, y, z);
-      const tieneSolucionAhora = false;
+      const tieneSolucionAhora = true;
       console.log(x, y, z);
       const arraySolucionX = [];
       const arraySolucionY = [];
-      let arraySolucion = [];
+      
       const solucion = minSteps(x, y, z, arraySolucionX, arraySolucionY);
       console.log("solucion", solucion, "x", arraySolucionX.length);
       if (solucion === arraySolucionX.length) {
@@ -30,16 +33,15 @@ const App = () => {
           arraySolucionX[arraySolucionX.length - 1].explanation.concat(
             ", solved"
           );
-        arraySolucion = arraySolucionX.slice();
+        setArraySolucion(arraySolucionX.slice());
       } else {
-        console.log(arraySolucionX.length);
         arraySolucionY[arraySolucionY.length - 1].explanation =
           arraySolucionY[arraySolucionY.length - 1].explanation.concat(
             ", solved"
           );
-        arraySolucion = arraySolucionY.slice();
+          setArraySolucion(arraySolucionY.slice());
       }
-      console.log("Solucion", arraySolucion);
+      
 
       setTieneSolucion(tieneSolucionAhora);
     }
@@ -235,7 +237,27 @@ const App = () => {
           </button>
         </form>
       </div>
-      {tieneSolucion && <Solucion x={x} y={y} medida={z} trigger={trigger} />}
+      {tieneSolucion && 
+      <Table responsive bordered>
+      <thead>
+        <tr>
+          <th className="tg-0labucketX tebucketXt-center">BucketX</th>
+          <th className="tg-0labucketX tebucketXt-center">BucketY</th>
+          <th className="tg-0labucketX tebucketXt-center ">explanation</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+     { arraySolucion.map((item, index) => (
+            <tr key={index}>
+              <td>{item.x}</td>
+              <td>{item.y}</td>
+              <td>{item.explanation}</td>
+            </tr>
+          ))}
+      </tbody>
+    </Table> 
+    }
 
       {!tieneSolucion && <h3>No tiene Solucion</h3>}
     </>
