@@ -4,7 +4,7 @@ import "./App.css";
 import Solucion from "./Solucion/Solucion";
 import { Form } from "react-bootstrap";
 
-function App() {
+const App = () => {
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
   const [z, setZ] = useState(0);
@@ -18,69 +18,184 @@ function App() {
 
     if (revision(x, y, z)) {
       // const tieneSolucionAhora = verificarSolucion(x, y, z);
-      const tieneSolucionAhora = true
+      const tieneSolucionAhora = false;
       console.log(x, y, z);
-      console.log(gcd(x,y,z));
+      const arraySolucionX = [];
+      const arraySolucionY = [];
+      let arraySolucion = [];
+      const solucion = minSteps(x, y, z, arraySolucionX, arraySolucionY);
+      console.log("solucion", solucion, "x", arraySolucionX.length);
+      if (solucion === arraySolucionX.length) {
+        arraySolucionX[arraySolucionX.length - 1].explanation =
+          arraySolucionX[arraySolucionX.length - 1].explanation.concat(
+            ", solved"
+          );
+        arraySolucion = arraySolucionX.slice();
+      } else {
+        console.log(arraySolucionX.length);
+        arraySolucionY[arraySolucionY.length - 1].explanation =
+          arraySolucionY[arraySolucionY.length - 1].explanation.concat(
+            ", solved"
+          );
+        arraySolucion = arraySolucionY.slice();
+      }
+      console.log("Solucion", arraySolucion);
+
       setTieneSolucion(tieneSolucionAhora);
     }
   };
   //Se usa la siguiente funcion para determinar validez de datos
   const revision = (x, y, z) =>
-    Number.isInteger(x) &&
-    Number.isInteger(y) &&
-    Number.isInteger(z) &&
-    x > 0 &&
-    y > 0 &&
-    z > 0;
+    (Number.isInteger(x) &&
+      Number.isInteger(y) &&
+      Number.isInteger(z) &&
+      x > 0 &&
+      y > 0 &&
+      z > 0) ||
+    // If gcd of n and m does not divide d
+    // then solution is not possible
+    z % gcd(x, y) != 0;
   // La siguiente se usa para confirmar si tiene solucion
-  const verificarSolucion = (x, y, z) =>
-    (!(z > x + y) &&
-      !(z > x && z > y) &&
-      ((z % x === 0 && y > z) || (z % y === 0 && x > z))) ||
-    z === x + y;
+
   /* Este es el maximo comun divisor, lo que permite saber si se puede alcanzar el valor de Z a traves de las
  funciones establecidas */
- /* const euclideanExtendedAlgorithm = (x, y, z) => {
-  let r0 = x;
-  let r1 = y;
-  let s0 = 1;
-  let s1 = 0;
-  let t0 = 0;
-  let t1 = 1;
+  const gcd = (a, b) => {
+    if (b == 0) return a;
 
-  while (r1 !== 0) {
-    const quotient = Math.floor(r0 / r1);
+    return gcd(b, a % b);
+  };
 
-    const tempR = r0;
-    const tempS = s0;
-    const tempT = t0;
+  /*
+     fromCap -- Capacity of jug from which
+     water is poured toCap -- Capacity of
+      jug to which water is poured
+      d -- Amount to be measured
+     */
+  const pour = (fromCap, toCap, d, arraySolucion, fromLabel, toLabel) => {
+    // Initialize current amount of water
+    // in source and destination jugs
+    let from = fromCap;
+    let to = 0;
+    let step = 1;
 
-    r0 = r1;
-    s0 = s1;
-    t0 = t1;
+    llenarBalde(arraySolucion, fromLabel, fromCap, toLabel, to);
 
-    r1 = tempR - quotient * r1;
-    s1 = tempS - quotient * s1;
-    t1 = tempT - quotient * t1;
-  }
+    // Break the loop when either of the two
+    // jugs has d litre water
+    while (from + to != d) {
+      // Find the maximum amount that can be
+      // poured
+      var temp = Math.min(from, toCap - to);
+      transferirBalde(arraySolucion, toLabel, fromLabel, temp, to, from);
 
-  if (r0 === 0 || z % r0 !== 0) {
-    // No solution exists
-    return null;
-  }
+      to += temp;
+      from -= temp;
+      step++;
 
-  const a = s0 * (z / r0);
-  const b = t0 * (z / r0);
+      if (from + to == d) break;
 
-  return { a, b };
-} */
+      // If first jug becomes empty, fill it
+      if (from == 0) {
+        from = fromCap;
+        step++;
+        llenarBalde(arraySolucion, fromLabel, from, toLabel, to);
+      }
 
- function gcd(a , b) {
-        if (b == 0)
-            return a;
- 
-        return gcd(b, a % b);
+      // If second jug becomes full, empty it
+      if (to == toCap) {
+        to = 0;
+        step++;
+        vaciarBalde(arraySolucion, toLabel, fromLabel, from);
+      }
     }
+    return step;
+  };
+
+  // Returns count of minimum steps needed to
+  // measure d liter
+  const minSteps = (m, n, d, arraySolucionX, arraySolucionY) => {
+    // Return minimum two cases:
+    // a) Water of n liter jug is poured into
+    // m liter jug
+    // b) Vice versa of "a"
+
+    return Math.min(
+      pour(n, m, d, arraySolucionX, "x", "y"), // n to m
+      pour(m, n, d, arraySolucionY, "y", "x")
+    ); // m to n
+  };
+
+  /**
+   * Vacía uno de los baldes
+   * @param  {Array} arraySolucion array de la solución
+   * @param  {String} nombreBaldeVaciar Selecciona el balde que se quiere vaciar
+   * @param  {String} nombreResto Selecciona el balde que va a tener o la posición anterior o inicia en 0
+   * @param  {Number} valorResto Selecciona el valor del balde con su valor inicial o valor de posicion anterior
+   * @return {Void}      El objetivo del método es vaciar uno de los baldes, usando una condicional
+   */
+
+  const vaciarBalde = (
+    arraySolucion,
+    nombreBaldeVaciar,
+    nombreResto,
+    valorResto
+  ) => {
+    arraySolucion.push({
+      [nombreBaldeVaciar]: 0,
+      [nombreResto]: valorResto,
+      explanation: `Dumb ${nombreBaldeVaciar}`,
+    });
+  };
+
+  /**
+   * Llena uno de los baldes
+   * @param  {Array} arraySolucion array de la solución
+   * @param  {String} nombreBalde Selecciona el balde que se quiere llenar
+   * @param  {String} nombreResto Selecciona el balde que va a tener o la posición anterior o inicia en 0
+   * @param  {Number} valorBalde Selecciona el valor del balde con que se va a llenar
+   * @param  {Number} valorResto Selecciona el valor del balde con su valor inicial o valor de posicion anterior
+   * @return {Void}      El objetivo del método es llenar uno de los baldes, usando condicionales
+   */
+
+  const llenarBalde = (
+    arraySolucion,
+    nombreBalde,
+    valorBalde,
+    nombreResto,
+    valorResto
+  ) => {
+    arraySolucion.push({
+      [nombreBalde]: valorBalde,
+      [nombreResto]: valorResto,
+      explanation: `Filled ${nombreBalde}`,
+    });
+  };
+
+  /**
+   * Transfiere uno de los baldes
+   * @param  {Array} arraySolucion array de la solución
+   * @param  {String} baldeQueTransfiere Selecciona el balde que se va a transferir
+   * @param  {String} baldeTransferido Selecciona el balde que recibe la transferencia
+   * @param {Number} referencia Valor de referencia que se va a transferir
+   * @param  {Number} valorAnteriorTransferido Selecciona el balde se va a incrementar por la referencia
+   * @param  {Number} valorAnteriorTransfiere Selecciona el balde que va a reducir por la referencia
+   * @return {Void}      El objetivo del método es transferir un balde a otro
+   */
+
+  const transferirBalde = (
+    arraySolucion,
+    baldeTransferido,
+    baldeQueTransfiere,
+    referencia,
+    valorAnteriorTransferido,
+    valorAnteriorTransfiere
+  ) => {
+    arraySolucion.push({
+      [baldeTransferido]: valorAnteriorTransferido + referencia,
+      [baldeQueTransfiere]: valorAnteriorTransfiere - referencia,
+      explanation: `Transfer ${baldeQueTransfiere} to  ${baldeTransferido} `,
+    });
+  };
 
   return (
     <>
@@ -125,6 +240,6 @@ function App() {
       {!tieneSolucion && <h3>No tiene Solucion</h3>}
     </>
   );
-}
+};
 
 export default App;

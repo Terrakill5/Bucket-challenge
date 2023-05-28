@@ -12,6 +12,7 @@ const Solucion = (bucketX) => {
   const [encontradaSolucion, setEncontradaSolucion] = useState(false);
 
   const explicacion = () => {
+    console.log("entra a solucion",bucketX.x,bucketX.y,bucketX.z);
     setEncontradaSolucion(false);
     // Primero se vacia el array de la solucion
 
